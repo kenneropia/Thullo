@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const mongooseOptions = require('./utils/mongooseOptions');
 
-const roleSchema = new mongoose.Schema(
+const AssignSchema = new mongoose.Schema(
   {
     owner: {
       type: mongoose.Schema.Types.ObjectId,
@@ -11,19 +11,27 @@ const roleSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
+    user_role: {
+      type: 'enum',
+      enum: [ 'collaborator', 'participant'],
+      default: 'participant',
+    },
     organisation: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Organisation',
     },
-    user_role: {
-      type: String,
-      enum: ['supervisor', 'manager', 'member'],
-      default: 'member',
+    board: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Board',
+    },
+    task: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Task',
     },
   },
   mongooseOptions
 );
 
-const Role = mongoose.model('Role', roleSchema);
+const Assign = mongoose.model('Assign', AssignSchema);
 
-module.exports = Role;
+module.exports = Assign;

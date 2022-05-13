@@ -1,6 +1,7 @@
 const multer = require('multer');
-const sharp = require('sharp');
 const User = require('../models/user.model');
+const userService = require('../services/user.service');
+const resizePhoto = require('../utils/resizePhoto');
 const AppError = require('./../utils/appError');
 const factory = require('./utils/handlerFactory');
 
@@ -35,11 +36,9 @@ exports.resizeUserPhoto = async (req, res, next) => {
 
   req.file.filename = `user-${req.user.id}.jpeg`;
 
-  await sharp(req.file.buffer)
-    .resize(500, 500)
-    .toFormat('jpeg')
-    .jpeg({ quality: 90 })
-    .toFile(`public/img/users/${req.file.filename}`);
+  await resizePhoto(req.file.buffer, 500, 500).toFile(
+    `public/img/users/${req.file.filename}`
+  );
 
   next();
 };

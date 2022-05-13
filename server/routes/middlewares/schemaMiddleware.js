@@ -12,5 +12,4 @@ const schemaMiddleware = (schema) =>
     }
     next();
   });
-
 module.exports = schemaMiddleware;

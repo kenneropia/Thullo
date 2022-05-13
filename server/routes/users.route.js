@@ -1,16 +1,19 @@
 const express = require('express');
 const userController = require('../controllers/user.controller');
-const authController = require('../controllers/auth.controller');
-const schemaMiddleware = require('./middleware/schemaMiddleware');
+
 const { signupSchema } = require('./schemas/auth.schema');
+const schemaMiddleware = require('./middlewares/schemaMiddleware');
+const { restrictToRole } = require('./middlewares/restrictTo');
+const protect = require('./middlewares/protect');
+
 // the set of user routes
 const router = express.Router();
 
-router.use(authController.protect);
+router.use(protect);
 
 router.get('/me', userController.getUser);
 
-router.use(authController.restrictTo('instructor'));
+router.use(restrictToRole('instructor'));
 
 router
   .route('/')

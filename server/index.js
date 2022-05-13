@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-
+require('./utils/createFolders');
 process.on('uncaughtException', (err) => {
   console.error('UNCAUGHT EXCEPTION! 💥 Shutting down...');
   console.error(err);
@@ -11,10 +11,20 @@ dotenv.config({ path: './.env' });
 const app = require('./app');
 const DB =
   process.env.NODE_ENV == 'development'
-    ? process.env.DB_URL_ENV
-    : process.env.DB_CLOUD_ENV;
+    ? process.env.CLOUD_DB_URL
+    : process.env.LOCAL_DB_URL;
 
 mongoose.connect(DB).then(() => console.log('DB connection successful!'));
+
+mongoose.set('strict', true);
+mongoose.set('strictPopulate', false);
+mongoose.set('toJSON', {
+  transform: function (doc, ret, options) {
+    ret.id = ret._id;
+
+    delete ret.__v;
+  },
+});
 
 const port = process.env.PORT || 3005;
 const server = app.listen(port, () => {

@@ -42,6 +42,14 @@ class APIFeatures {
     return this;
   }
 
+  populate() {
+    if (this.queryString.populate) {
+      const populate = this.queryString.populate.split(',').join(' ');
+      this.query = this.query.populate(populate);
+    }
+    return this;
+  }
+
   paginate() {
     const page = this.queryString.page * 1 || 1;
     const limit = this.queryString.limit * 1 || 100;

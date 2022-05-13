@@ -51,7 +51,6 @@ module.exports = class Email {
       html,
       text: htmlToText.fromString(html),
     };
-    console.log(this.newTransport);
 
     // 3) Create a transport and send email
 

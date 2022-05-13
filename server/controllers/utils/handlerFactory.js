@@ -2,17 +2,17 @@ const AppError = require('./../../utils/AppError');
 const APIFeatures = require('./../../utils/ApiFeatures');
 
 const checkForId = (req) => {
-  let filter = { user: req.user.id };
-  if (req.params.course) filter.course = req.params.course;
-  if (req.params.video) filter.video = req.params.video;
-  if (req.params.comment) filter.comment = req.params.comment;
+  if (req.params.board) filter.board = req.params.board;
+  if (req.params.organization) filter.organization = req.params.organization;
+  if (req.params.label) filter.label = req.params.label;
   return filter;
 };
 
 exports.updateOne = (Model) => async (req, res, next) => {
+  const filter = { id: req.params.id };
+  !req.user?.isOwner && (filter.owner = req.user._id);
   const verifiedDoc = await Model.find({
-    id: req.params.id,
-    user: req.user._id,
+    ...filter,
   });
 
   if (!verifiedDoc.length) {
@@ -37,7 +37,7 @@ exports.updateOne = (Model) => async (req, res, next) => {
 exports.createOne = (Model) => async (req, res, next) => {
   let filter = checkForId(req);
 
-  console.log({ ...req.body, ...filter });
+  ({ ...req.body, ...filter });
   const doc = await Model.create({ ...req.body, ...filter });
 
   res.status(201).json({
@@ -51,9 +51,11 @@ exports.getOne = (Model, popOptions) => async (req, res, next) => {
   if (popOptions) query = query.populate(popOptions);
   const doc = await query;
 
-  if (!doc) {
-    return next(new AppError('No document found with that ID', 404));
-  }
+  // if (!doc) {
+  //   return next(new AppError('No document found with that ID', 404));
+  // }
+
+  if (!doc) throw (new Error('').NotFound = Model.modelName.toLowerCase());
 
   res.status(200).json({
     status: 'success',
@@ -68,7 +70,8 @@ exports.getAll = (Model) => async (req, res, next) => {
     .filter()
     .sort()
     .limitFields()
-    .paginate();
+    .paginate()
+    .populate();
   // const doc = await features.query.explain();
   const doc = await features.query;
   const count = await Model.countDocuments({});
@@ -81,10 +84,14 @@ exports.getAll = (Model) => async (req, res, next) => {
 };
 
 exports.deleteOne = (Model) => async (req, res, next) => {
-  let doc = await Model.find({ id: req.params.id, user: req.user._id });
+  const filter = { id: req.params.id };
+  !req.user?.isOwner && (filter.owner = req.user._id);
+  let doc = await Model.find(filter);
 
   if (!doc.length) {
-    return next(new AppError('No document found with that ID', 404));
+    return next(
+      new AppError(`No ${Model.modelName.toLowerCase} found with that ID`, 404)
+    );
   }
 
   doc = await Model.findByIdAndDelete(req.params.id);

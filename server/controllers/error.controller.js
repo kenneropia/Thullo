@@ -5,15 +5,19 @@ const handleCastErrorDB = (err) => {
   return new AppError(message, 400);
 };
 
+const handleNotFoundDocument = (err) => {
+  const message = `No ${error.NotFound} found with that ID`;
+  return new AppError(message, 404);
+};
+
 const handleDuplicateFieldsDB = (err) => {
-  const value = err.errmsg.match(/(["'])(\\?.)*?\1/)[0];
+  const value = err.message.match(/(["'])(\\?.)*?\1/)[0];
 
   const message = `Duplicate field value: ${value}. Please use another value!`;
   return new AppError(message, 400);
 };
 
 const handleValidationErrorDB = (err) => {
-  console.log('');
   const errors = Object.values(err.errors).map((el) => el.message);
 
   const message = `Invalid input data. ${errors.join('. ')}`;
@@ -57,25 +61,30 @@ const sendErrorProd = (err, req, res) => {
 
 module.exports = (err, req, res, next) => {
   // console.log(err.stack);
-  console.log(err.message);
+
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
-
-  if (process.env.NODE_ENV === 'development') {
-    sendErrorDev(err, req, res);
-  } else if (process.env.NODE_ENV === 'production') {
-    let error = { ...err };
-    error.message = err.message;
-
-    if (error.code === 'LIMIT_FILE_SIZE')
-      error = new AppError('Payload too large, the limit is 200mb', 413);
-    if (error.name === 'CastError') error = handleCastErrorDB(error);
-    if (error.code === 11000) error = handleDuplicateFieldsDB(error);
-    if (error.name === 'ValidationError')
-      error = handleValidationErrorDB(error);
-    if (error.name === 'JsonWebTokenError') error = handleJWTError();
-    if (error.name === 'TokenExpiredError') error = handleJWTExpiredError();
-
-    sendErrorProd(error, req, res);
-  }
+  // if (process.env.NODE_ENV === 'development') {
+  //   sendErrorDev(err, req, res);
+  // }
+  // else if (process.env.NODE_ENV === 'production') {
+  let error = { ...err };
+  error.message = err.message;
+  console.log(err.message);
+  console.log({
+    status: err.status,
+    ...err,
+    message: err.message,
+    stack: err.stack,
+  });
+  if (error.code === 'LIMIT_FILE_SIZE')
+    error = new AppError('Payload too large, the limit is 250mb', 413);
+  if (error.name === 'CastError') error = handleCastErrorDB(error);
+  if (error.code === 11000) error = handleDuplicateFieldsDB(error);
+  if (error.name === 'ValidationError') error = handleValidationErrorDB(error);
+  if (error.name === 'JsonWebTokenError') error = handleJWTError();
+  if (error.name === 'TokenExpiredError') error = handleJWTExpiredError();
+  if (error.NotFound) error = handleNotFoundDocument(error);
+  sendErrorProd(error, req, res);
+  // }
 };

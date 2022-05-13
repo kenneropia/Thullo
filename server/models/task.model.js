@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const mongooseOptions = require('./utils/mongooseOptions');
 
-const tagSchema = new mongoose.Schema(
+const TaskSchema = new mongoose.Schema(
   {
     title: String,
     description: String,
@@ -13,14 +13,20 @@ const tagSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Organisation',
     },
-    tasks: {
+    label: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Task',
+      ref: 'Label',
     },
+    tags: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Tag',
+      },
+    ],
   },
   mongooseOptions
 );
 
-const Tag = mongoose.model('Tag', tagSchema);
+const Task = mongoose.model('Task', TaskSchema);
 
-module.exports = Tag;
+module.exports = Task;

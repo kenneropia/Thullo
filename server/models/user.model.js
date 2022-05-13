@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 
 // the schema is what data going to the db is tested against
 const userSchema = new mongoose.Schema({
-  name: {
+  username: {
     type: String,
     required: [true, 'Please tell us your name!'],
   },
@@ -19,11 +19,6 @@ const userSchema = new mongoose.Schema({
   photo: {
     type: String,
     default: 'default.jpg',
-  },
-  role: {
-    type: String,
-    enum: ['memeber', 'admin', 'creator'],
-    default: 'student',
   },
   password: {
     type: String,
