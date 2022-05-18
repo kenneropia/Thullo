@@ -5,11 +5,6 @@ const handleCastErrorDB = (err) => {
   return new AppError(message, 400);
 };
 
-const handleNotFoundDocument = (err) => {
-  const message = `No ${error.NotFound} found with that ID`;
-  return new AppError(message, 404);
-};
-
 const handleDuplicateFieldsDB = (err) => {
   const value = err.message.match(/(["'])(\\?.)*?\1/)[0];
 
@@ -68,6 +63,7 @@ module.exports = (err, req, res, next) => {
   //   sendErrorDev(err, req, res);
   // }
   // else if (process.env.NODE_ENV === 'production') {
+  console.log(err.NotFound);
   let error = { ...err };
   error.message = err.message;
   console.log(err.message);
@@ -84,7 +80,7 @@ module.exports = (err, req, res, next) => {
   if (error.name === 'ValidationError') error = handleValidationErrorDB(error);
   if (error.name === 'JsonWebTokenError') error = handleJWTError();
   if (error.name === 'TokenExpiredError') error = handleJWTExpiredError();
-  if (error.NotFound) error = handleNotFoundDocument(error);
+
   sendErrorProd(error, req, res);
   // }
 };

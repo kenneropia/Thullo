@@ -2,14 +2,18 @@ const AppError = require('./../../utils/AppError');
 const APIFeatures = require('./../../utils/ApiFeatures');
 
 const checkForId = (req) => {
+  const filter = {};
+
   if (req.params.board) filter.board = req.params.board;
   if (req.params.organization) filter.organization = req.params.organization;
   if (req.params.label) filter.label = req.params.label;
+  if (req.params.permitted_user) filter.label = req.params.permitted_user;
   return filter;
 };
 
 exports.updateOne = (Model) => async (req, res, next) => {
   const filter = { id: req.params.id };
+
   !req.user?.isOwner && (filter.owner = req.user._id);
   const verifiedDoc = await Model.find({
     ...filter,
@@ -54,8 +58,13 @@ exports.getOne = (Model, popOptions) => async (req, res, next) => {
   // if (!doc) {
   //   return next(new AppError('No document found with that ID', 404));
   // }
-
-  if (!doc) throw (new Error('').NotFound = Model.modelName.toLowerCase());
+  if (!doc)
+    return next(
+      new AppError(
+        `No ${Model.modelName.toLowerCase()} found with that ID`,
+        404
+      )
+    );
 
   res.status(200).json({
     status: 'success',

@@ -7,13 +7,13 @@ const AssignSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
-    permitted: {
+    permitted_user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
     user_role: {
-      type: 'enum',
-      enum: [ 'collaborator', 'participant'],
+      type: String,
+      enum: ['collaborator', 'participant'],
       default: 'participant',
     },
     organisation: {

@@ -11,12 +11,18 @@ exports.restrictToRole = (...roles) => {
         ? true
         : false;
     req.user.isOwner = owner;
-    const user = await Role.findOne({
-      organisation: req.body.organisation,
-      permitted: req.user._id,
-      $in: roles,
+
+    const transformedRoles = [];
+    roles.forEach((role) => {
+      transformedRoles.push(role);
     });
-    if (owner || user) {
+    console.log(transformedRoles);
+    const user = await Role.findOne({
+      organisation: req.params.organisation,
+      permitted_user: req.user._id,
+      user_role: { $in: transformedRoles },
+    });
+    if (!user) {
       return next(
         new AppError('You do not have permission to perform this action', 403)
       );

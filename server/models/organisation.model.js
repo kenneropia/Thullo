@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 const mongooseOptions = require('./utils/mongooseOptions');
 
-const OrganisationSchema = new mongoose.Schema(
+const organisationSchema = new mongoose.Schema(
   {
     title: String,
     description: String,
-    email: String,
+
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
@@ -32,6 +32,8 @@ const OrganisationSchema = new mongoose.Schema(
   mongooseOptions
 );
 
-const Organisation = mongoose.model('Organisation', OrganisationSchema);
+// organisationSchema.index({ owner: 1 }, { unique: true });
+
+const Organisation = mongoose.model('Organisation', organisationSchema);
 
 module.exports = Organisation;

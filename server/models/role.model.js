@@ -7,7 +7,7 @@ const roleSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
-    permitted: {
+    permitted_user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
@@ -22,6 +22,11 @@ const roleSchema = new mongoose.Schema(
     },
   },
   mongooseOptions
+);
+
+roleSchema.index(
+  { organisation: 1, permitted_user: 1, owner: 1 },
+  { unique: true }
 );
 
 const Role = mongoose.model('Role', roleSchema);

@@ -1,38 +1,59 @@
-const { protect } = require('../controllers/auth.controller');
 const {
   createOrganisation,
   getOrganisationById,
   updateOrganisation,
   deleteOrganisation,
 } = require('../controllers/organisation.controller');
+const protect = require('./middlewares/protect');
 const addOrganisationId = require('./middlewares/addOrganisationId');
 const { restrictToRole } = require('./middlewares/restrictTo');
 const addOwnerId = require('./middlewares/addOwnerId');
 const router = require('./utils/router');
-const convertToId = require('./middlewares/convertToId')('organisation');
+const schemaMiddleware = require('./middlewares/schemaMiddleware');
+const {
+  createOrganisationSchema,
+  updateOrganisationSchema,
+} = require('./schemas/organisation.schema');
+const express = require('express');
+const boardRouter = require('./board.route');
+const roleRouter = require('./role.route');
 
-const organisationRouter = router;
-organisationRouter.use(protect, addOrganisationId);
+let convertToId = require('./middlewares/convertToId')('organisation');
 
-organisationRouter
-  .route('/')
-  .post(addOwnerId, addOrganisationId, createOrganisation)
-  .get('/:organisation', convertToId, addOrganisationId, getOrganisationById)
-  .patch(
-    '/:organisation',
-    convertToId,
-    addOrganisationId,
-    addOwnerId,
-    restrictToRole('supervisor'),
-    updateOrganisation
-  )
-  .delete(
-    '/:organisation',
-    convertToId,
-    addOrganisationId,
-    addOwnerId,
-    restrictToRole('supervisor'),
-    deleteOrganisation
-  );
+const organisationRouter = express.Router({ mergeParams: true });
+
+organisationRouter.use(protect);
+
+organisationRouter.post(
+  '/',
+  protect,
+  addOwnerId,
+  schemaMiddleware(createOrganisationSchema),
+  createOrganisation
+);
+
+organisationRouter.use(addOrganisationId);
+
+organisationRouter.get('/:organisation', convertToId, getOrganisationById);
+organisationRouter.delete(
+  '/:organisation',
+  convertToId,
+  addOrganisationId,
+  addOwnerId,
+  restrictToRole('supervisor'),
+  deleteOrganisation
+);
+organisationRouter.patch(
+  '/:organisation',
+  convertToId,
+  addOrganisationId,
+  addOwnerId,
+  restrictToRole('supervisor'),
+  schemaMiddleware(updateOrganisationSchema),
+  updateOrganisation
+);
+
+organisationRouter.use('/:organisation/roles', roleRouter);
+organisationRouter.use('/:organisation/boards', boardRouter);
 
 module.exports = organisationRouter;

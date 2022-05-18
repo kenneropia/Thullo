@@ -13,16 +13,18 @@ const router = require('./utils/router');
 const labelRouter = router;
 
 labelRouter
-  .route('/labels')
+  .route('/')
   .get(addOrganisationId, restrictToRole('supervisor', 'manager'), getLabels)
   .post(
     addOwnerId,
     addOrganisationId,
     restrictToRole('supervisor', 'manager'),
     createLabel
-  )
+  );
+
+labelRouter
+  .route('/:label')
   .get(
-    '/:label',
     convertToId,
     addOrganisationId,
     restrictToRole('supervisor', 'manager'),
@@ -30,7 +32,6 @@ labelRouter
   )
 
   .patch(
-    '/:label',
     convertToId,
     addOrganisationId,
     addOwnerId,
@@ -38,11 +39,11 @@ labelRouter
     updateLabel
   )
   .delete(
-    '/:label',
     convertToId,
     addOrganisationId,
     addOwnerId,
     restrictToRole('supervisor', 'manager'),
     deleteLabel
   );
+
 module.exports = labelRouter;

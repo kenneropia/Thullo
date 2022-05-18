@@ -6,6 +6,7 @@ const morgan = require('morgan');
 
 const authRouter = require('./routes/auth.route');
 const userRouter = require('./routes/users.route');
+const organisationRouter = require('./routes/organisation.route');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/error.controller');
@@ -32,6 +33,7 @@ app.get('/test', (req, res) => {
 
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/organisation', organisationRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

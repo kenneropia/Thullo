@@ -2,11 +2,10 @@ const AppError = require('../../utils/AppError');
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const User = require('../../models/user.model');
-const { log } = require('console');
 
 const protect = async (req, res, next) => {
   // 1) Getting token and check of it's there
-  log(req.headers?.authorization);
+
   let token;
   if (
     req.headers?.authorization &&
@@ -27,6 +26,7 @@ const protect = async (req, res, next) => {
 
   // 3) Check if user still exists
   const currentUser = await User.findById(decoded.id);
+
   if (!currentUser) {
     return next(
       new AppError(
@@ -44,6 +44,7 @@ const protect = async (req, res, next) => {
   }
 
   // GRANT ACCESS TO PROTECTED ROUTE
+
   req.user = currentUser;
   // req.body.user = currentUser.id;
   res.locals.user = currentUser;

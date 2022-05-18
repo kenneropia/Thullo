@@ -20,7 +20,7 @@ exports.createOrganisation = async (req, res, next) => {
       owner: req.user._id,
       organisation: newOrgansation._id,
       user_role: 'supervisor',
-      permitted: req.user._id,
+      permitted_user: req.user._id,
     });
 
     await session.commitTransaction();

@@ -25,6 +25,13 @@ mongoose.set('toJSON', {
     delete ret.__v;
   },
 });
+mongoose.set('toObject', {
+  transform: function (doc, ret, options) {
+    ret.id = ret._id;
+
+    delete ret.__v;
+  },
+});
 
 const port = process.env.PORT || 3005;
 const server = app.listen(port, () => {
