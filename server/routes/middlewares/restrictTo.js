@@ -1,7 +1,9 @@
 const Organisation = require('../../models/organisation.model');
 const AppError = require('../../utils/appError');
 const Role = require('../../models/role.model');
+const Assign = require('../../models/assign.model');
 
+//this is a middleware tthat restricts on an organisation level, if you're part of the org you are gave access
 exports.restrictToRole = (...roles) => {
   return async (req, res, next) => {
     // roles ['admin', 'lead-guide']. role='user'
@@ -12,16 +14,12 @@ exports.restrictToRole = (...roles) => {
         : false;
     req.user.isOwner = owner;
 
-    const transformedRoles = [];
-    roles.forEach((role) => {
-      transformedRoles.push(role);
-    });
-    console.log(transformedRoles);
     const user = await Role.findOne({
       organisation: req.params.organisation,
       permitted_user: req.user._id,
-      user_role: { $in: transformedRoles },
+      user_role: { $in: roles },
     });
+
     if (!user) {
       return next(
         new AppError('You do not have permission to perform this action', 403)
@@ -30,4 +28,20 @@ exports.restrictToRole = (...roles) => {
 
     return next();
   };
+};
+
+exports.restrictToAssigned = async (req, res, next) => {
+  const isAssigned = await Assign.findOne({
+    permitted_user: req.user._id,
+    task: req.params.task,
+    organisation: req.params.organisation,
+    board: req.params.board,
+  });
+  if (!isAssigned) {
+    return next(
+      new AppError('You do not have permission to perform this action', 403)
+    );
+  }
+
+  next();
 };

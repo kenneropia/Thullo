@@ -11,22 +11,7 @@ exports.createBoard = async (req, res, next) => {
   });
 };
 
-exports.updateBoard = async (req, res, next) => {
-  const doc = await Board.findByIdAndUpdate(
-    req.params.board,
-    { ...req.body },
-    { new: true }
-  );
-
-  if (!doc) {
-    return next(new AppError('No board found with that ID', 404));
-  }
-
-  res.status(201).json({
-    status: 'success',
-    data: doc,
-  });
-};
+exports.updateBoard = factory.deleteOne(Board);
 
 exports.getAllBoards = factory.getAll(Board);
 

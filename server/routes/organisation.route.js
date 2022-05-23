@@ -20,7 +20,7 @@ const roleRouter = require('./role.route');
 
 let convertToId = require('./middlewares/convertToId')('organisation');
 
-const organisationRouter = express.Router({ mergeParams: true });
+const organisationRouter = express.Router();
 
 organisationRouter.use(protect);
 

@@ -1,23 +1,23 @@
+const express = require('express');
 const {
   createTask,
   getTaskById,
   updateTask,
   getAllTasks,
 } = require('../controllers/task.controller');
-const router = require('./utils/router');
 const addOrganisationId = require('./middlewares/addOrganisationId');
 const schemaMiddleware = require('./middlewares/schemaMiddleware');
 const addOwnerId = require('./middlewares/addOwnerId');
 const convertToId = require('./middlewares/convertToId')('task');
 const { restrictToRole } = require('./middlewares/restrictTo');
-const { addTaskSchema } = require('./schemas/task.schema');
+const { addTaskSchema, updateTaskSchema } = require('./schemas/task.schema');
 const {
   assignUserToTask,
   removeUserFromTask,
-  reassignUserToTask,
 } = require('../controllers/assign.controller');
+const { assignUserSchema } = require('./schemas/assign.schema');
 
-const taskRouter = router;
+const taskRouter = express.Router({ mergeParams: true });
 
 taskRouter
   .route('/')
@@ -35,7 +35,7 @@ taskRouter
   .get(convertToId, addOrganisationId, getTaskById)
   .patch(
     convertToId,
-    addOwnerId,
+    addOrganisationId,
     restrictToRole('supervisor', 'manager'),
     schemaMiddleware(updateTaskSchema),
     updateTask
@@ -43,14 +43,23 @@ taskRouter
 
 taskRouter
   .route('/assign-user')
-  .post(convertToId, addOwnerId, addOrganisationId, assignUserToTask);
-
-taskRouter
-  .route('/reassign-user')
-  .patch(convertToId, addOwnerId, addOrganisationId, reassignUserToTask);
+  .post(
+    convertToId,
+    addOwnerId,
+    addOrganisationId,
+    restrictToRole('supervisor', 'manager'),
+    schemaMiddleware(assignUserSchema),
+    assignUserToTask
+  );
 
 taskRouter
   .route('/remove-user')
-  .delete(convertToId, addOwnerId, addOrganisationId, removeUserFromTask);
+  .delete(
+    convertToId,
+    addOwnerId,
+    addOrganisationId,
+    restrictToRole('supervisor', 'manager'),
+    removeUserFromTask
+  );
 
 module.exports = taskRouter;

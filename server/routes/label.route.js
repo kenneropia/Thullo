@@ -1,6 +1,6 @@
 const {
   createLabel,
-  getLabels,
+  getAllLabels,
   updateLabel,
   deleteLabel,
 } = require('../controllers/label.controller');
@@ -14,7 +14,7 @@ const labelRouter = router;
 
 labelRouter
   .route('/')
-  .get(addOrganisationId, restrictToRole('supervisor', 'manager'), getLabels)
+  .get(addOrganisationId, restrictToRole('supervisor', 'manager'), getAllLabels)
   .post(
     addOwnerId,
     addOrganisationId,

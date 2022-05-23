@@ -5,16 +5,17 @@ const checkForId = (req) => {
   const filter = {};
 
   if (req.params.board) filter.board = req.params.board;
-  if (req.params.organization) filter.organization = req.params.organization;
+  if (req.params.organisation) filter.organisation = req.params.organisation;
   if (req.params.label) filter.label = req.params.label;
   if (req.params.permitted_user) filter.label = req.params.permitted_user;
   return filter;
 };
 
 exports.updateOne = (Model) => async (req, res, next) => {
-  const filter = { id: req.params.id };
+  const filter = { ...checkForId(req), id: req.params.id };
 
   !req.user?.isOwner && (filter.owner = req.user._id);
+  console.log(filter);
   const verifiedDoc = await Model.find({
     ...filter,
   });
@@ -51,6 +52,7 @@ exports.createOne = (Model) => async (req, res, next) => {
 };
 
 exports.getOne = (Model, popOptions) => async (req, res, next) => {
+  console.log(req.params.id);
   let query = Model.findOne({ id: req.params.id });
   if (popOptions) query = query.populate(popOptions);
   const doc = await query;

@@ -13,10 +13,12 @@ const tagSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Organisation',
     },
-    tasks: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Task',
-    },
+    tasks: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Task',
+      },
+    ],
   },
   mongooseOptions
 );

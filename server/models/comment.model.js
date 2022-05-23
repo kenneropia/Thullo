@@ -1,36 +1,41 @@
 const mongoose = require('mongoose');
 const mongooseOptions = require('./utils/mongooseOptions');
 
-const TaskSchema = new mongoose.Schema(
+const LabelSchema = new mongoose.Schema(
   {
-    title: String,
+    title: {
+      type: String,
+      required: true,
+    },
     description: String,
+    level: {
+      type: String,
+      enum: ['board', 'task'],
+      default: 'task',
+    },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
+    edit: Boolean,
     organisation: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Organisation',
     },
     board: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Board',
+      ref: 'board',
     },
-    label: {
+    task: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Label',
+      ref: 'Task',
     },
-    tags: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Tag',
-      },
-    ],
   },
   mongooseOptions
 );
 
-const Task = mongoose.model('Task', TaskSchema);
+const Label = mongoose.model('Label', LabelSchema);
 
-module.exports = Task;
+module.exports = Label;
+
+module.exports = Label;
