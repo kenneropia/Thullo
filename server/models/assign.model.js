@@ -11,11 +11,7 @@ const AssignSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
-    user_role: {
-      type: String,
-      enum: ['collaborator', 'participant'],
-      default: 'participant',
-    },
+
     organisation: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Organisation',

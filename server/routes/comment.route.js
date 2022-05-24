@@ -1,65 +1,49 @@
+const express = require('express');
 const {
   createComment,
   getAllComments,
   updateComment,
   deleteComment,
 } = require('../controllers/comment.controller');
-const addOrganisationId = require('./middlewares/addOrganisationId');
-const addOwnerId = require('./middlewares/addOwnerId');
-const convertToId = require('./middlewares/convertToId')('comment');
-const { restrictToRole } = require('./middlewares/restrictTo');
+const {
+  restrictToRole,
+  restrictToAssigned,
+} = require('./middlewares/restrictTo');
+
+const addToBody = require('./middlewares/addToBody');
+const convertToId = addToBody({ id: 'comment' });
+const addOwnerId = addToBody('owner');
 
 const schemaMiddleware = require('./middlewares/schemaMiddleware');
 const {
   createCommentSchema,
   updateCommentSchema,
 } = require('./schemas/comment.schema');
-const router = require('./utils/router');
 
-const commentRouter = router;
+const commentRouter = express.Router({ mergeParams: true });
 
 commentRouter
   .route('/')
-  .get(
-    addOrganisationId,
-    restrictToRole('supervisor', 'manager'),
-    getAllComments
-  )
+  .get(getAllComments)
   .post(
     addOwnerId,
-    addOrganisationId,
-    restrictToRole('supervisor', 'manager'),
+    restrictToAssigned,
     schemaMiddleware(createCommentSchema),
     createComment
   );
 
 commentRouter
   .route('/:comment')
-  .get(
-    convertToId,
-    addOrganisationId,
-    restrictToRole('supervisor', 'manager'),
-    getCommentById
-  )
-
   .patch(
     convertToId,
-    addOrganisationId,
     addOwnerId,
     (req, res, next) => {
       req.body.edited = true;
       next();
     },
-    restrictToRole('supervisor', 'manager'),
     schemaMiddleware(updateCommentSchema),
     updateComment
   )
-  .delete(
-    convertToId,
-    addOrganisationId,
-    addOwnerId,
-    restrictToRole('supervisor', 'manager'),
-    deleteComment
-  );
+  .delete(convertToId, addOwnerId, deleteComment);
 
 module.exports = commentRouter;

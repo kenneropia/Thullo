@@ -5,10 +5,11 @@ const {
   deleteOrganisation,
 } = require('../controllers/organisation.controller');
 const protect = require('./middlewares/protect');
-const addOrganisationId = require('./middlewares/addOrganisationId');
+
+const addToBody = require('./middlewares/addToBody');
+const addOrganisationId = addToBody('organisation');
+const addOwnerId = addToBody('owner');
 const { restrictToRole } = require('./middlewares/restrictTo');
-const addOwnerId = require('./middlewares/addOwnerId');
-const router = require('./utils/router');
 const schemaMiddleware = require('./middlewares/schemaMiddleware');
 const {
   createOrganisationSchema,
@@ -18,11 +19,11 @@ const express = require('express');
 const boardRouter = require('./board.route');
 const roleRouter = require('./role.route');
 
-let convertToId = require('./middlewares/convertToId')('organisation');
+let convertToId = addToBody({ id: 'organisation' });
 
 const organisationRouter = express.Router();
 
-organisationRouter.use(protect);
+organisationRouter.use(protect, addOrganisationId);
 
 organisationRouter.post(
   '/',
@@ -38,7 +39,6 @@ organisationRouter.get('/:organisation', convertToId, getOrganisationById);
 organisationRouter.delete(
   '/:organisation',
   convertToId,
-  addOrganisationId,
   addOwnerId,
   restrictToRole('supervisor'),
   deleteOrganisation
@@ -46,7 +46,6 @@ organisationRouter.delete(
 organisationRouter.patch(
   '/:organisation',
   convertToId,
-  addOrganisationId,
   addOwnerId,
   restrictToRole('supervisor'),
   schemaMiddleware(updateOrganisationSchema),

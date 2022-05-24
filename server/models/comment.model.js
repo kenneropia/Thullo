@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const mongooseOptions = require('./utils/mongooseOptions');
 
-const LabelSchema = new mongoose.Schema(
+const CommentSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -22,10 +22,6 @@ const LabelSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Organisation',
     },
-    board: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'board',
-    },
     task: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Task',
@@ -34,8 +30,8 @@ const LabelSchema = new mongoose.Schema(
   mongooseOptions
 );
 
-const Label = mongoose.model('Label', LabelSchema);
+const Comment = mongoose.model('Comment', CommentSchema);
 
-module.exports = Label;
+module.exports = Comment;
 
-module.exports = Label;
+module.exports = Comment;

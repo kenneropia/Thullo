@@ -8,7 +8,7 @@ exports.createCommentSchema = Joi.object({
   organisation: objectId().required(),
   board: objectId(),
   task: objectId(),
-}).xor('board', 'task');
+});
 
 exports.updateCommentSchema = Joi.object({
   title: Joi.string(),

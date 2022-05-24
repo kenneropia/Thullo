@@ -2,6 +2,7 @@ const Organisation = require('../../models/organisation.model');
 const AppError = require('../../utils/appError');
 const Role = require('../../models/role.model');
 const Assign = require('../../models/assign.model');
+const Board = require('../../models/board.model');
 
 //this is a middleware tthat restricts on an organisation level, if you're part of the org you are gave access
 exports.restrictToRole = (...roles) => {
@@ -31,13 +32,15 @@ exports.restrictToRole = (...roles) => {
 };
 
 exports.restrictToAssigned = async (req, res, next) => {
+  const board = (await Board.findById(req.params.board)).owner;
+
   const isAssigned = await Assign.findOne({
     permitted_user: req.user._id,
-    task: req.params.task,
+
     organisation: req.params.organisation,
     board: req.params.board,
   });
-  if (!isAssigned) {
+  if (!isAssigned || req.user._id !== board.owner) {
     return next(
       new AppError('You do not have permission to perform this action', 403)
     );

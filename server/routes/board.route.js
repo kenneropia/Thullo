@@ -8,15 +8,17 @@ const {
   getAllBoards,
 } = require('../controllers/board.controller');
 
-const addOrganisationId = require('./middlewares/addOrganisationId');
+const addToBody = require('./middlewares/addToBody');
+const addOrganisationId = addToBody('organisation');
+const addBoardId = addToBody('board');
 const convertToId = require('./middlewares/convertToId')('board');
-const addOwnerId = require('./middlewares/addOwnerId');
+const addOwnerId = addToBody('owner');
 const { restrictToRole } = require('./middlewares/restrictTo');
 const schemaMiddleware = require('./middlewares/schemaMiddleware');
 
 const { objectId } = require('./schemas/utils/JoiObjectId');
-const tagRouter = require('./tag.route');
 
+const tagRouter = require('./tag.route');
 const taskRouter = require('./task.route');
 
 const boardRouter = express.Router({ mergeParams: true });
@@ -32,12 +34,11 @@ const updateBoardSchema = Joi.object({
   title: Joi.string().min(5).max(60).required(),
   description: Joi.string().min(5).max(200).required(),
 });
-
+boardRouter.use(addBoardId);
 boardRouter
   .route('/')
   .post(
     restrictToRole('supervisor', 'manager'),
-    addOrganisationId,
     addOwnerId,
     schemaMiddleware(createBoardSchema),
     createBoard
@@ -50,7 +51,6 @@ boardRouter
   .patch(
     restrictToRole('supervisor', 'manager'),
     convertToId,
-    addOrganisationId,
     addOwnerId,
     schemaMiddleware(updateBoardSchema),
     updateBoard
@@ -58,7 +58,6 @@ boardRouter
   .delete(
     restrictToRole('supervisor', 'manager'),
     convertToId,
-    addOrganisationId,
     addOwnerId,
     deleteBoard
   );

@@ -1,9 +1,10 @@
+const Assign = require('../models/assign.model');
 const Board = require('../models/board.model');
 const AppError = require('../utils/AppError');
 const factory = require('./utils/handlerFactory');
 
 exports.createBoard = async (req, res, next) => {
-  const doc = await Board.create({ ...req.body });
+  const doc = await Board.create({ ...req.body }).lean();
 
   res.status(201).json({
     status: 'success',
