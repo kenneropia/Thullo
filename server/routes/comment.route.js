@@ -19,9 +19,10 @@ const {
   createCommentSchema,
   updateCommentSchema,
 } = require('./schemas/comment.schema');
+const addOrganisationId = require('./middlewares/addOrganisationId');
 
 const commentRouter = express.Router({ mergeParams: true });
-
+commentRouter.use(addOrganisationId);
 commentRouter
   .route('/')
   .get(getAllComments)
@@ -36,7 +37,6 @@ commentRouter
   .route('/:comment')
   .patch(
     convertToId,
-    addOwnerId,
     (req, res, next) => {
       req.body.edited = true;
       next();

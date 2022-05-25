@@ -23,7 +23,7 @@ const commentRouter = require('./comment.route');
 
 const taskRouter = express.Router({ mergeParams: true });
 
-taskRouter.use(addTaskId);
+taskRouter.use(addTaskId, addOrganisationId, addBoardId);
 
 taskRouter
   .route('/')
@@ -43,15 +43,15 @@ taskRouter.route('/:task').get(convertToId, getTaskById).patch(
   updateTask
 );
 
-taskRouter.route('/:task/assign-user').post(
-  convertToId,
-  addOwnerId,
-  addOrganisationId,
-
-  restrictToRole('supervisor', 'manager'),
-  schemaMiddleware(assignUserSchema),
-  assignUserToTask
-);
+taskRouter
+  .route('/:task/assign-user')
+  .post(
+    addOwnerId,
+    addTaskId,
+    restrictToRole('supervisor', 'manager'),
+    schemaMiddleware(assignUserSchema),
+    assignUserToTask
+  );
 
 taskRouter.route('/remove-user').delete(
   convertToId,

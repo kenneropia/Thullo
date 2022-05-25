@@ -14,4 +14,7 @@ exports.updateCommentSchema = Joi.object({
   title: Joi.string(),
   description: Joi.string(),
   edited: Joi.boolean(),
+  organisation: objectId().required(),
+  board: objectId(),
+  task: objectId(),
 });

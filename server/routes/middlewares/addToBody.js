@@ -5,6 +5,8 @@ const addToBody = (param) => (req, res, next) => {
   }
   if (!Array.isArray(param) && typeof param === 'object') {
     req.params.id = req.params[param.id];
+
+    delete req.params[param.id];
     return next();
   }
   req.body[param] = req.params[param];

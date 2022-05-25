@@ -32,19 +32,19 @@ exports.restrictToRole = (...roles) => {
 };
 
 exports.restrictToAssigned = async (req, res, next) => {
-  const board = (await Board.findById(req.params.board)).owner;
+  const board = await Board.findById(req.params.board);
 
   const isAssigned = await Assign.findOne({
     permitted_user: req.user._id,
 
     organisation: req.params.organisation,
     board: req.params.board,
-  });
-  if (!isAssigned || req.user._id !== board.owner) {
-    return next(
-      new AppError('You do not have permission to perform this action', 403)
-    );
-  }
+  }).lean();
+  const owner = req.user._id.equals(board.owner);
+  if (isAssigned || owner) return next();
+  return next(
+    new AppError('You do not have permission to perform this action', 403)
+  );
 
   next();
 };

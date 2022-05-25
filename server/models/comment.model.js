@@ -8,11 +8,7 @@ const CommentSchema = new mongoose.Schema(
       required: true,
     },
     description: String,
-    level: {
-      type: String,
-      enum: ['board', 'task'],
-      default: 'task',
-    },
+
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
