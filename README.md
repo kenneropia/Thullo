@@ -14,22 +14,37 @@ Link to the [postman collection](https://www.postman.com/speeding-comet-566121/w
 
 ## Actions
 
-Thullo is a Trello Clone, with only the API functionality.
+#### Thullo is a Trello Clone, with only the API functionality.
 
 I can list of available boards
+
 I can add a new board with a cover photo, title and visibility options
+
 I can see a board with different columns, team members,... according to the design
+
 I can add a new label
+
 I can add a new card to the existing label
+
 I can add a member to the board (user must exist in the system)
+
 I can change the name of the board by selecting it
+
 I can change/add the description of the board
 Given I am an admin, I can remove members from the board
+
 I can move a card from a column to another one by drag and drop
+
 I can rename the title of a card
+
 I can see which column the card belongs to
+
 I can see and change the description
+
 I can add new attachments and I can download and delete existing attachments
+
 I can add a new comment. Given I am the author, I can edit and delete the comment.
+
 I can change the card cover image
+
 I can add labels with given colors to a card
