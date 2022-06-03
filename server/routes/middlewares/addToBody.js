@@ -10,7 +10,7 @@ const addToBody = (param) => (req, res, next) => {
     return next();
   }
   req.body[param] = req.params[param];
-  console.log(req.params);
+
   next();
 };
 module.exports = addToBody;

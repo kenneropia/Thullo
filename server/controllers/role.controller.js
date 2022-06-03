@@ -11,7 +11,6 @@ exports.updateRole = async (req, res, next) => {
     organisation: req.params.organisation,
   });
 
-  console.log(verifiedDoc);
   if (!verifiedDoc)
     return next(
       new AppError(`No ${Role.modelName.toLowerCase()} found with that ID`, 404)

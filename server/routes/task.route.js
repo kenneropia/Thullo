@@ -20,6 +20,7 @@ const {
 } = require('../controllers/assign.controller');
 const { assignUserSchema } = require('./schemas/assign.schema');
 const commentRouter = require('./comment.route');
+const storageService = require('../services/storage.service');
 
 const taskRouter = express.Router({ mergeParams: true });
 
@@ -35,13 +36,20 @@ taskRouter
   )
   .get(getAllTasks);
 
-taskRouter.route('/:task').get(convertToId, getTaskById).patch(
-  convertToId,
+taskRouter
+  .route('/:task')
+  .get(convertToId, getTaskById)
+  .patch(
+    convertToId,
+    restrictToRole('supervisor', 'manager'),
+    schemaMiddleware(updateTaskSchema),
+    updateTask
+  );
 
-  restrictToRole('supervisor', 'manager'),
-  schemaMiddleware(updateTaskSchema),
-  updateTask
-);
+taskRouter.route('/:task/attachment').post(storageService.upload);
+taskRouter
+  .route('/:task/attachment/:attachment')
+  .delete(storageService.deleteFile);
 
 taskRouter
   .route('/:task/assign-user')

@@ -15,7 +15,7 @@ exports.updateOne = (Model) => async (req, res, next) => {
   const filter = { ...checkForId(req), id: req.params.id };
 
   !req.user?.isOwner && (filter.owner = req.user._id);
-  console.log(filter);
+
   const verifiedDoc = await Model.find({
     ...filter,
   });
@@ -52,7 +52,6 @@ exports.createOne = (Model) => async (req, res, next) => {
 };
 
 exports.getOne = (Model, popOptions) => async (req, res, next) => {
-  console.log(req.params.id);
   let query = Model.findOne({ id: req.params.id });
   if (popOptions) query = query.populate(popOptions);
   const doc = await query;
