@@ -16,6 +16,8 @@ Link to the [postman collection](https://www.postman.com/speeding-comet-566121/w
 
 #### Thullo is a Trello Clone, with only the API functionality.
 
+## Link to the [design](https://devchallenges.io/challenges/wP0LbGgEeKhpFHUpPpDh)
+
 I can list of available boards
 
 I can add a new board with a cover photo, title and visibility options
